@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
-import 'api_client.dart';
-import 'secrets.dart';
+import 'package:kumamite/api_client.dart';
+import 'package:kumamite/secrets.dart';
+import 'package:kumamite/pages/login.dart';
 import 'package:kumamite/pages/splash.dart';
+import 'package:kumamite/server_info.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
-  runApp(const App());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool? onboarding = await prefs.getBool('onboarding');
+  onboarding ??= true;
+  runApp(App(onboarding: onboarding));
 }
 
 class App extends StatelessWidget {
-  const App({super.key});
+  const App({super.key, required this.onboarding});
+
+  final bool onboarding;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +29,7 @@ class App extends StatelessWidget {
       ),
       // home: const HomePage(title: 'Uptime Mite'),
       debugShowCheckedModeBanner: false,
-      home: const SplashScreen(),
+      home: onboarding ? const SplashScreen() : const HomePage(),
     );
   }
 }
@@ -52,6 +61,8 @@ class _HomePageState extends State<HomePage> {
           });
         } else {
           // TODO: Redirect to Server Screen
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => ServerInfo()));
         }
       }),
       secrets.getAccessToken().then((response) {
@@ -61,6 +72,8 @@ class _HomePageState extends State<HomePage> {
           });
         } else {
           // TODO: Redirect to login Screen
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => LoginPage()));
         }
       }),
     ]).then((_) {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kumamite/main.dart';
 import 'package:kumamite/api_client.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -160,6 +161,9 @@ class _AuthFormState extends State<AuthForm> {
                   });
                   _setCredentials();
                   if (await _getAccessToken()) {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    await prefs.setBool('onboarding', false);
                     Navigator.pushAndRemoveUntil(
                         context,
                         MaterialPageRoute(builder: (context) => HomePage()),
