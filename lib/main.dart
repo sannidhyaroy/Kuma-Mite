@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kumamite/api_client.dart';
 import 'package:kumamite/secrets.dart';
 import 'package:kumamite/routes.dart';
+import 'package:kumamite/themes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
@@ -40,10 +41,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Kuma Mite',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF5CDD8B)),
-        useMaterial3: true,
-      ),
+      theme: darkTheme,
       debugShowCheckedModeBanner: false,
       initialRoute: _getInitialRoute(),
       routes: routes,
