@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kumamite/server_info.dart';
 
 class SplashScreen extends StatelessWidget {
   const SplashScreen({super.key});
@@ -39,8 +38,7 @@ class SplashScreen extends StatelessWidget {
               const SizedBox(height: 25),
               OutlinedButton(
                 onPressed: () {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => ServerInfo()));
+                  Navigator.of(context).pushNamed('/server');
                 },
                 style: ElevatedButton.styleFrom(
                   side: BorderSide(

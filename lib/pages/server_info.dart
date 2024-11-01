@@ -1,6 +1,5 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:kumamite/pages/login.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -121,10 +120,7 @@ class _ServerInfoState extends State<ServerInfo> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     _setServer();
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
-                    );
+                    Navigator.of(context).pushNamed('/login');
                   }
                 },
                 style: OutlinedButton.styleFrom(

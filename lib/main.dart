@@ -1,23 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:kumamite/api_client.dart';
 import 'package:kumamite/secrets.dart';
-import 'package:kumamite/pages/login.dart';
-import 'package:kumamite/pages/splash.dart';
-import 'package:kumamite/server_info.dart';
+import 'package:kumamite/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  bool? onboarding = await prefs.getBool('onboarding');
-  onboarding ??= true;
-  runApp(App(onboarding: onboarding));
+  Secrets secrets = Secrets();
+  bool onboarding = prefs.getBool('onboarding') ?? true;
+  String baseUrl = await secrets.getBaseUrl() ?? '';
+  String accessToken = await secrets.getAccessToken() ?? '';
+  runApp(App(
+    onboarding: onboarding,
+    baseUrl: baseUrl,
+    accessToken: accessToken,
+  ));
 }
 
 class App extends StatelessWidget {
-  const App({super.key, required this.onboarding});
+  const App(
+      {super.key,
+      required this.onboarding,
+      required this.baseUrl,
+      required this.accessToken});
 
   final bool onboarding;
+  final String baseUrl, accessToken;
+
+  String _getInitialRoute() {
+    return onboarding
+        ? '/splash'
+        : (baseUrl.isEmpty
+            ? '/server'
+            : (accessToken.isEmpty ? '/login' : '/'));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,9 +44,9 @@ class App extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF5CDD8B)),
         useMaterial3: true,
       ),
-      // home: const HomePage(title: 'Uptime Mite'),
       debugShowCheckedModeBanner: false,
-      home: onboarding ? const SplashScreen() : const HomePage(),
+      initialRoute: _getInitialRoute(),
+      routes: routes,
     );
   }
 }
@@ -42,9 +59,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late ApiClient apiClient;
-  late Secrets secrets;
-  late String baseUrl, accessToken;
+  final ApiClient apiClient = ApiClient();
   dynamic info, monitors;
   String errorMessage = '';
 
@@ -52,50 +67,15 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    secrets = Secrets();
-    Future.wait([
-      secrets.getBaseUrl().then((response) {
-        if (response != null) {
-          setState(() {
-            baseUrl = response;
-          });
-        } else {
-          // TODO: Redirect to Server Screen
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => ServerInfo()));
-        }
-      }),
-      secrets.getAccessToken().then((response) {
-        if (response != null) {
-          setState(() {
-            accessToken = response;
-          });
-        } else {
-          // TODO: Redirect to login Screen
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (context) => LoginPage()));
-        }
-      }),
-    ]).then((_) {
-      apiClient = ApiClient(baseUrl: baseUrl);
-      fetchInfo();
-      // fetchMonitors();
-    });
+    fetchInfo();
   }
 
-  Future<bool> isLoggedIn() async {
-    return await secrets.getAccessToken() != null ? true : false;
-  }
-
-  void fetchInfo() async {
+  Future<void> fetchInfo() async {
     try {
-      bool loggedIn = await isLoggedIn();
-      if (loggedIn) {
-        final result = await apiClient.getInfo(accessToken);
-        setState(() {
-          info = result;
-        });
-      }
+      final result = await apiClient.getInfo();
+      setState(() {
+        info = result;
+      });
     } catch (e) {
       setState(() {
         errorMessage = e.toString();
@@ -103,15 +83,12 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void fetchMonitors() async {
+  Future<void> fetchMonitors() async {
     try {
-      bool loggedIn = await isLoggedIn();
-      if (loggedIn) {
-        final result = await apiClient.getMonitors(accessToken);
-        setState(() {
-          monitors = result;
-        });
-      }
+      final result = await apiClient.getMonitors();
+      setState(() {
+        monitors = result;
+      });
     } catch (e) {
       setState(() {
         errorMessage = e.toString();

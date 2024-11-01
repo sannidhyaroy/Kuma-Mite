@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:kumamite/main.dart';
 import 'package:kumamite/api_client.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -81,7 +80,7 @@ class _AuthFormState extends State<AuthForm> {
       return false;
     } else {
       //TODO: Authenticate and get access token
-      final apiClient = ApiClient(baseUrl: baseUrl);
+      final apiClient = ApiClient();
       final bool success = await apiClient.login(username, password);
       print(success);
       return success;
@@ -164,10 +163,8 @@ class _AuthFormState extends State<AuthForm> {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
                     await prefs.setBool('onboarding', false);
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomePage()),
-                        (_) => false);
+                    Navigator.of(context)
+                        .pushNamedAndRemoveUntil('/', (_) => false);
                   } else {
                     // TODO: Notify the user of login issues
                     setState(() {

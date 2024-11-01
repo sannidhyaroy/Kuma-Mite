@@ -3,12 +3,10 @@ import 'package:http/http.dart' as http;
 import 'package:kumamite/secrets.dart';
 
 class ApiClient {
-  final String baseUrl;
   final secrets = Secrets();
 
-  ApiClient({required this.baseUrl});
-
   Future<bool> login(String username, String password) async {
+    String baseUrl = await secrets.getBaseUrl() ?? '';
     final response = await http.post(
       Uri.parse('$baseUrl/login/access-token'),
       headers: {
@@ -38,7 +36,9 @@ class ApiClient {
     }
   }
 
-  Future<dynamic> getInfo(String accessToken) async {
+  Future<dynamic> getInfo() async {
+    String baseUrl = await secrets.getBaseUrl() ?? '';
+    String accessToken = await secrets.getAccessToken() ?? '';
     final response = await http.get(
       Uri.parse('$baseUrl/info'),
       headers: {
@@ -54,7 +54,9 @@ class ApiClient {
     }
   }
 
-  Future<dynamic> getMonitors(String accessToken) async {
+  Future<dynamic> getMonitors() async {
+    String baseUrl = await secrets.getBaseUrl() ?? '';
+    String accessToken = await secrets.getAccessToken() ?? '';
     final response = await http.get(
       Uri.parse('$baseUrl/monitors/'),
       headers: {
