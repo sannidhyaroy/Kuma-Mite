@@ -29,7 +29,8 @@ class _ServerInfoState extends State<ServerInfo> {
   }
 
   Future<void> _launchURL() async {
-    final Uri url = Uri.parse('https://github.com/sannidhyaroy/');
+    final Uri url =
+        Uri.parse('https://github.com/sannidhyaroy/Kuma-Mite/wiki/Get-Started');
     if (await canLaunchUrl(url)) {
       await launchUrl(url);
     } else {
