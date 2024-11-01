@@ -82,15 +82,7 @@ class _AuthFormState extends State<AuthForm> {
       //TODO: Authenticate and get access token
       final apiClient = ApiClient();
       final bool success = await apiClient.login(username, password);
-      print(success);
       return success;
-      // if (response.success!) {
-      //   await storage.write(key: 'accessToken', value: response.body);
-      // } else {
-      //   // TODO: Report the error to the user
-      //   // throw Exception(response.body);
-      // }
-      // return response.success!;
     }
   }
 
@@ -163,18 +155,22 @@ class _AuthFormState extends State<AuthForm> {
                     SharedPreferences prefs =
                         await SharedPreferences.getInstance();
                     await prefs.setBool('onboarding', false);
-                    Navigator.of(context)
-                        .pushNamedAndRemoveUntil('/', (_) => false);
+                    if (context.mounted) {
+                      Navigator.of(context)
+                          .pushNamedAndRemoveUntil('/', (_) => false);
+                    }
                   } else {
                     // TODO: Notify the user of login issues
                     setState(() {
                       isPressed = false;
                     });
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('There was an error while logging in!'),
-                      ),
-                    );
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('There was an error while logging in!'),
+                        ),
+                      );
+                    }
                   }
                 }
               },
