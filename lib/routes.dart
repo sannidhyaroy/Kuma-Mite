@@ -7,6 +7,6 @@ import 'package:kumamite/pages/server_info.dart';
 Map<String, Widget Function(BuildContext)> routes = {
   '/': (context) => HomePage(),
   '/splash': (context) => SplashScreen(),
-  '/server': (context) => ServerInfo(),
+  '/server': (context) => ServerPage(),
   '/login': (context) => LoginPage(),
 };

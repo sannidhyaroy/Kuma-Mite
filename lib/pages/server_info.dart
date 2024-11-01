@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class ServerInfo extends StatefulWidget {
-  const ServerInfo({super.key});
+class ServerPage extends StatefulWidget {
+  const ServerPage({super.key});
 
   @override
-  State<ServerInfo> createState() => _ServerInfoState();
+  State<ServerPage> createState() => _ServerPageState();
 }
 
-class _ServerInfoState extends State<ServerInfo> {
+class _ServerPageState extends State<ServerPage> {
   final _controller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final storage = FlutterSecureStorage();
