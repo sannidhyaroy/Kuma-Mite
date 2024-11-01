@@ -61,27 +61,27 @@ class AuthForm extends StatefulWidget {
 
 class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
-  final storage = FlutterSecureStorage();
+  final _storage = FlutterSecureStorage();
 
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  String username = '', password = '';
-  bool isPressed = false;
+  String _username = '', _password = '';
+  bool _isPressed = false, _showPassword = false;
 
   void _setCredentials() {
-    username = _usernameController.text;
-    password = _passwordController.text;
+    _username = _usernameController.text;
+    _password = _passwordController.text;
   }
 
   Future<bool> _getAccessToken() async {
-    String? baseUrl = await storage.read(key: 'baseUrl');
+    String? baseUrl = await _storage.read(key: 'baseUrl');
     if (baseUrl == null) {
       // TODO: Prompt the User for Server Info
       return false;
     } else {
       //TODO: Authenticate and get access token
       final apiClient = ApiClient();
-      final bool success = await apiClient.login(username, password);
+      final bool success = await apiClient.login(_username, _password);
       return success;
     }
   }
@@ -121,14 +121,23 @@ class _AuthFormState extends State<AuthForm> {
             ),
             TextFormField(
               autofocus: false,
-              autofillHints: [AutofillHints.username],
+              autofillHints: [AutofillHints.password],
               controller: _passwordController,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'Password',
                 hintText: '********',
-                border: UnderlineInputBorder(),
+                suffixIcon: IconButton(
+                  onPressed: () {
+                    setState(() {
+                      _showPassword = !_showPassword;
+                    });
+                  },
+                  icon: Icon(
+                      _showPassword ? Icons.visibility : Icons.visibility_off),
+                ),
+                border: const UnderlineInputBorder(),
               ),
-              obscureText: true,
+              obscureText: !_showPassword,
               style: TextStyle(
                 fontFamily: 'Raleway',
                 fontWeight: FontWeight.bold,
@@ -146,9 +155,9 @@ class _AuthFormState extends State<AuthForm> {
             ),
             OutlinedButton(
               onPressed: () async {
-                if (_formKey.currentState!.validate() && isPressed == false) {
+                if (_formKey.currentState!.validate() && _isPressed == false) {
                   setState(() {
-                    isPressed = true;
+                    _isPressed = true;
                   });
                   _setCredentials();
                   if (await _getAccessToken()) {
@@ -162,7 +171,7 @@ class _AuthFormState extends State<AuthForm> {
                   } else {
                     // TODO: Notify the user of login issues
                     setState(() {
-                      isPressed = false;
+                      _isPressed = false;
                     });
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -175,11 +184,11 @@ class _AuthFormState extends State<AuthForm> {
                 }
               },
               style: OutlinedButton.styleFrom(
-                shape: isPressed
+                shape: _isPressed
                     ? CircleBorder()
                     : RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(50)),
-                padding: isPressed
+                padding: _isPressed
                     ? EdgeInsets.all(8)
                     : EdgeInsets.symmetric(
                         horizontal: 40,
@@ -189,7 +198,7 @@ class _AuthFormState extends State<AuthForm> {
                   color: Colors.black,
                 ),
               ),
-              child: isPressed
+              child: _isPressed
                   ? CircularProgressIndicator()
                   : const Text(
                       'Login',
