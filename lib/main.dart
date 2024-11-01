@@ -3,6 +3,8 @@ import 'package:kumamite/api_client.dart';
 import 'package:kumamite/secrets.dart';
 import 'package:kumamite/routes.dart';
 import 'package:kumamite/themes.dart';
+import 'package:kumamite/pages/overview_tab.dart';
+import 'package:kumamite/pages/monitors_tab.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
@@ -60,12 +62,23 @@ class _HomePageState extends State<HomePage> {
   final ApiClient apiClient = ApiClient();
   dynamic info, monitors;
   String errorMessage = '';
+  int _navIndex = 0;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     fetchInfo();
+  }
+
+  String getAppBarTitle() {
+    switch (_navIndex) {
+      case 0:
+        return 'Overview';
+      case 1:
+        return 'Monitors';
+    }
+    return '';
   }
 
   Future<void> fetchInfo() async {
@@ -98,31 +111,36 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dashboard'),
+        title: Text(getAppBarTitle()),
       ),
       body: SafeArea(
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),
-          child: errorMessage.isNotEmpty
-              ? Center(child: Text('Error: $errorMessage'))
-              : info != null
-                  ? Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Version: ${info['version']}'),
-                          Text('Latest Version: ${info['latestVersion']}'),
-                          Text('Is Container: ${info['isContainer']}'),
-                          Text('Primary Base URL: ${info['primaryBaseURL']}'),
-                          Text('Server Timezone: ${info['serverTimezone']}'),
-                          Text(
-                              'Server Timezone Offset: ${info['serverTimezoneOffset']}'),
-                        ],
-                      ),
-                    )
-                  : Center(child: CircularProgressIndicator()),
+          child: [
+            OverviewTab(errorMessage: errorMessage, info: info),
+            MonitorsTab(),
+          ][_navIndex],
         ),
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _navIndex,
+        destinations: [
+          NavigationDestination(
+            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.home_filled),
+            label: 'Home',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.view_list_outlined),
+            selectedIcon: Icon(Icons.view_list),
+            label: 'Monitors',
+          ),
+        ],
+        onDestinationSelected: (int index) {
+          setState(() {
+            _navIndex = index;
+          });
+        },
       ),
     );
   }
