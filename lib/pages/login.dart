@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kumamite/api_client.dart';
+import 'package:kumamite/themes.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,38 +14,29 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF5CDD8B),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'Login to Uptime Kuma',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: 'Raleway',
-                  fontSize: 28,
-                  fontVariations: [
-                    FontVariation('wght', 600),
-                  ],
+    return Theme(
+      data: lightTheme,
+      child: Scaffold(
+        backgroundColor: themeColor,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Login to Uptime Kuma',
+                  style: setupScreenHeader,
                 ),
-              ),
-              const SizedBox(height: 5),
-              const Text(
-                'Authenticate using your Kuma API Credentials',
-                style: TextStyle(
-                  color: Colors.blueGrey,
-                  fontFamily: 'Quicksand',
-                  fontSize: 15,
-                  fontWeight: FontWeight.bold,
+                const SizedBox(height: 5),
+                Text(
+                  'Authenticate using your Kuma API Credentials',
+                  style: setupScreenSubtitle,
                 ),
-              ),
-              const SizedBox(height: 25),
-              AuthForm(),
-            ],
+                const SizedBox(height: 25),
+                AuthForm(),
+              ],
+            ),
           ),
         ),
       ),
@@ -100,15 +92,13 @@ class _AuthFormState extends State<AuthForm> {
                 "admin",
               ],
               controller: _usernameController,
+              cursorColor: setupScreenPrimaryColor,
               decoration: const InputDecoration(
                 labelText: 'Username',
                 hintText: 'admin',
                 border: UnderlineInputBorder(),
               ),
-              style: TextStyle(
-                fontFamily: 'Raleway',
-                fontWeight: FontWeight.bold,
-              ),
+              style: setupInputFieldText,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Username is required';
@@ -123,6 +113,7 @@ class _AuthFormState extends State<AuthForm> {
               autofocus: false,
               autofillHints: [AutofillHints.password],
               controller: _passwordController,
+              cursorColor: setupScreenPrimaryColor,
               decoration: InputDecoration(
                 labelText: 'Password',
                 hintText: '********',
@@ -138,10 +129,7 @@ class _AuthFormState extends State<AuthForm> {
                 border: const UnderlineInputBorder(),
               ),
               obscureText: !_showPassword,
-              style: TextStyle(
-                fontFamily: 'Raleway',
-                fontWeight: FontWeight.bold,
-              ),
+              style: setupInputFieldText,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Password should not be empty';
@@ -183,31 +171,12 @@ class _AuthFormState extends State<AuthForm> {
                   }
                 }
               },
-              style: OutlinedButton.styleFrom(
-                shape: _isPressed
-                    ? CircleBorder()
-                    : RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(50)),
-                padding: _isPressed
-                    ? EdgeInsets.all(8)
-                    : EdgeInsets.symmetric(
-                        horizontal: 40,
-                        vertical: 8,
-                      ),
-                side: BorderSide(
-                  color: Colors.black,
-                ),
-              ),
+              style: _isPressed ? loginProgressButtonStyle : loginButtonStyle,
               child: _isPressed
                   ? CircularProgressIndicator()
-                  : const Text(
+                  : Text(
                       'Login',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: 'Raleway',
-                        fontVariations: [FontVariation("wght", 500)],
-                        fontSize: 20,
-                      ),
+                      style: setupButtonText,
                     ),
             ),
           ],

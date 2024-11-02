@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 
 // Primary Color
-Color primaryColor = Color(0xFF5CDD8B);
+Color themeColor = Color(0xFF5CDD8B);
 
-// Primary font
+// Font Families
 String primaryFontFamily = 'Raleway';
+String secondaryFontFamily = 'Quicksand';
 
 // Material App Themes
 ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
-  colorSchemeSeed: primaryColor,
+  colorSchemeSeed: themeColor,
   fontFamily: primaryFontFamily,
   textTheme: ralewayTheme,
   useMaterial3: true,
@@ -17,7 +18,7 @@ ThemeData lightTheme = ThemeData(
 
 ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
-  colorSchemeSeed: primaryColor,
+  colorSchemeSeed: themeColor,
   fontFamily: primaryFontFamily,
   textTheme: ralewayTheme,
   useMaterial3: true,
@@ -47,14 +48,91 @@ TextTheme ralewayTheme = TextTheme(
   bodySmall: fontLightTextStyle,
 );
 
-// Text Styles
+// Text Styles for Variable fonts
 TextStyle fontBolderTextStyle = TextStyle(fontVariations: fontBolder);
 TextStyle fontBoldTextStyle = TextStyle(fontVariations: fontBold);
 TextStyle fontNormalTextStyle = TextStyle(fontVariations: fontNormal);
 TextStyle fontLightTextStyle = TextStyle(fontVariations: fontLight);
 
-// Font Variation lists
-List<FontVariation> fontBolder = [FontVariation('wght', 900)];
+// Variable Font Weights
+List<FontVariation> fontBoldest = [FontVariation('wght', 900)];
+List<FontVariation> fontBolder = [FontVariation('wght', 700)];
 List<FontVariation> fontBold = [FontVariation('wght', 600)];
 List<FontVariation> fontNormal = [FontVariation('wght', 500)];
 List<FontVariation> fontLight = [FontVariation('wght', 300)];
+
+/*
+ *   Onboarding Screen Themes
+ */
+Color setupScreenPrimaryColor = Colors.black;
+Color setupScreenSubtitleColor = Colors.blueGrey;
+
+TextStyle splashScreenHeader = TextStyle(
+  color: setupScreenPrimaryColor,
+  fontFamily: primaryFontFamily,
+  fontSize: 25,
+  fontVariations: fontBolder,
+);
+TextStyle splashScreenSubtitle = TextStyle(
+  color: setupScreenSubtitleColor,
+  fontFamily: secondaryFontFamily,
+  fontSize: 13,
+  fontVariations: fontNormal,
+);
+TextStyle setupScreenHeader = TextStyle(
+  color: setupScreenPrimaryColor,
+  fontFamily: primaryFontFamily,
+  fontSize: 28,
+  fontVariations: fontBold,
+);
+TextStyle setupScreenSubtitle = TextStyle(
+  color: setupScreenSubtitleColor,
+  fontFamily: secondaryFontFamily,
+  fontSize: 15,
+  fontVariations: fontNormal,
+);
+TextStyle setupButtonText = TextStyle(
+  color: setupScreenPrimaryColor,
+  fontFamily: primaryFontFamily,
+  fontVariations: fontNormal,
+  fontSize: 20,
+);
+TextStyle setupInputFieldText = TextStyle(
+  fontFamily: primaryFontFamily,
+);
+TextStyle setupScreenLink = TextStyle(
+  decoration: TextDecoration.underline,
+);
+
+ButtonStyle setupNextButtonStyle = OutlinedButton.styleFrom(
+  side: BorderSide(
+    color: setupScreenPrimaryColor,
+  ),
+  shape: CircleBorder(),
+  padding: EdgeInsets.all(5),
+);
+
+Icon setupNextButtonIcon = Icon(
+  Icons.navigate_next,
+  color: setupScreenPrimaryColor,
+  size: 40,
+);
+
+ButtonStyle loginButtonStyle = OutlinedButton.styleFrom(
+  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+  padding: EdgeInsets.symmetric(
+    horizontal: 40,
+    vertical: 8,
+  ),
+  side: BorderSide(
+    color: setupScreenPrimaryColor,
+  ),
+);
+
+ButtonStyle loginProgressButtonStyle = OutlinedButton.styleFrom(
+  shape: CircleBorder(),
+  padding: EdgeInsets.all(8),
+  side: BorderSide(
+    color: setupScreenPrimaryColor,
+  ),
+);

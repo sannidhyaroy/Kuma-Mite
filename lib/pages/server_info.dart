@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:kumamite/themes.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -40,104 +41,81 @@ class _ServerPageState extends State<ServerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF5CDD8B),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'Enter your Kuma API Server\'s address',
-                style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: 'Raleway',
-                  fontSize: 28,
-                  fontVariations: [
-                    FontVariation('wght', 600),
-                  ],
+    return Theme(
+      data: lightTheme,
+      child: Scaffold(
+        backgroundColor: themeColor,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Enter your Kuma API Server\'s address',
+                  style: setupScreenHeader,
                 ),
-              ),
-              const SizedBox(height: 5),
-              RichText(
-                text: TextSpan(
-                  style: TextStyle(
-                    color: Colors.blueGrey,
-                    fontFamily: 'Quicksand',
-                    fontSize: 15,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  children: <TextSpan>[
-                    TextSpan(
-                      text:
-                          'You\'ll need a RestAPI Server running alongside Kuma for this app to be able to communicate with it. ',
-                    ),
-                    TextSpan(
-                      text: 'Read more.',
-                      style: TextStyle(
-                        decoration: TextDecoration.underline,
+                const SizedBox(height: 5),
+                RichText(
+                  text: TextSpan(
+                    style: setupScreenSubtitle,
+                    children: <TextSpan>[
+                      TextSpan(
+                        text:
+                            'You\'ll need a RestAPI Server running alongside Kuma for this app to be able to communicate with it. ',
                       ),
-                      recognizer: TapGestureRecognizer()..onTap = _launchURL,
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 25),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: Form(
-                  key: _formKey,
-                  child: TextFormField(
-                    autofocus: true,
-                    autofillHints: [AutofillHints.url],
-                    controller: _controller,
-                    decoration: const InputDecoration(
-                      labelText: 'Kuma API Server Address',
-                      hintText: 'https://api.kuma.pet',
-                      border: UnderlineInputBorder(),
-                    ),
-                    style: TextStyle(
-                      fontFamily: 'Raleway',
-                      fontWeight: FontWeight.bold,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Server Address is required';
-                      } else if (!(isValidUrl(value))) {
-                        return 'Server Address is invalid';
-                      } else {
-                        return null;
-                      }
-                    },
+                      TextSpan(
+                        text: 'Read more.',
+                        style: setupScreenLink,
+                        recognizer: TapGestureRecognizer()..onTap = _launchURL,
+                      ),
+                    ],
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 30,
-              ),
-              OutlinedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _setServer();
-                    Navigator.of(context).pushNamed('/login');
-                  }
-                },
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(
-                    color: Colors.black,
+                const SizedBox(height: 25),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Form(
+                    key: _formKey,
+                    child: TextFormField(
+                      autofocus: true,
+                      autofillHints: [AutofillHints.url],
+                      controller: _controller,
+                      cursorColor: setupScreenPrimaryColor,
+                      decoration: const InputDecoration(
+                        labelText: 'Kuma API Server Address',
+                        hintText: 'https://api.kuma.pet',
+                        border: UnderlineInputBorder(),
+                      ),
+                      style: setupInputFieldText,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Server Address is required';
+                        } else if (!(isValidUrl(value))) {
+                          return 'Server Address is invalid';
+                        } else {
+                          return null;
+                        }
+                      },
+                    ),
                   ),
-                  shape: CircleBorder(),
-                  padding: EdgeInsets.all(5),
                 ),
-                child: Icon(
-                  Icons.navigate_next,
-                  color: Colors.black,
-                  size: 40,
+                SizedBox(
+                  height: 30,
                 ),
-              ),
-            ],
+                OutlinedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      _setServer();
+                      Navigator.of(context).pushNamed('/login');
+                    }
+                  },
+                  style: setupNextButtonStyle,
+                  child: setupNextButtonIcon,
+                ),
+              ],
+            ),
           ),
         ),
       ),
