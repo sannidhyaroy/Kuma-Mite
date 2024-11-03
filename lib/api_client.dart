@@ -24,7 +24,7 @@ class ApiClient {
     );
 
     if (response.statusCode == 200) {
-      final data = json.decode(response.body);
+      final data = json.decode(response.body) as Map<String, dynamic>;
       String? accessToken = data['access_token']; // Store the access token
       print('Access Token: $accessToken');
       secrets.setAccessToken(accessToken);
@@ -36,9 +36,17 @@ class ApiClient {
     }
   }
 
-  Future<dynamic> getInfo() async {
-    String baseUrl = await secrets.getBaseUrl() ?? '';
-    String accessToken = await secrets.getAccessToken() ?? '';
+  Future<Map<String, dynamic>> getInfo() async {
+    String? baseUrl = await secrets.getBaseUrl();
+    String? accessToken = await secrets.getAccessToken();
+    if (baseUrl == null) {
+      throw BaseUrlException(
+          'Server Address is not set. Set a valid url for the API Server');
+    }
+    if (accessToken == null) {
+      throw AccessTokenException(
+          'Access Token is not set. Login to the API Server to get a access token.');
+    }
     final response = await http.get(
       Uri.parse('$baseUrl/info'),
       headers: {
@@ -48,15 +56,23 @@ class ApiClient {
     );
 
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      return json.decode(response.body) as Map<String, dynamic>;
     } else {
-      throw Exception('Failed to load info: ${response.body}');
+      throw http.ClientException('Failed to load info: ${response.body}');
     }
   }
 
-  Future<dynamic> getMonitors() async {
-    String baseUrl = await secrets.getBaseUrl() ?? '';
-    String accessToken = await secrets.getAccessToken() ?? '';
+  Future<Map<String, dynamic>> getMonitors() async {
+    String? baseUrl = await secrets.getBaseUrl();
+    String? accessToken = await secrets.getAccessToken();
+    if (baseUrl == null) {
+      throw BaseUrlException(
+          'Server Address is not set. Set a valid url for the API Server');
+    }
+    if (accessToken == null) {
+      throw AccessTokenException(
+          'Access Token is not set. Login to the API Server to get a access token.');
+    }
     final response = await http.get(
       Uri.parse('$baseUrl/monitors/'),
       headers: {
@@ -66,9 +82,21 @@ class ApiClient {
     );
 
     if (response.statusCode == 200) {
-      return json.decode(response.body);
+      return json.decode(response.body) as Map<String, dynamic>;
     } else {
-      throw Exception('Failed to load monitors: ${response.body}');
+      throw http.ClientException('Failed to load monitors: ${response.body}');
     }
   }
+}
+
+class BaseUrlException implements Exception {
+  String cause;
+
+  BaseUrlException(this.cause);
+}
+
+class AccessTokenException implements Exception {
+  String cause;
+
+  AccessTokenException(this.cause);
 }

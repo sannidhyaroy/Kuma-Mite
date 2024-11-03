@@ -62,8 +62,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final ApiClient apiClient = ApiClient();
-  dynamic info, monitors;
-  String errorMessage = '';
+  dynamic info;
+  String infoErrorMessage = '';
   int _navIndex = 0;
 
   @override
@@ -91,20 +91,7 @@ class _HomePageState extends State<HomePage> {
       });
     } catch (e) {
       setState(() {
-        errorMessage = e.toString();
-      });
-    }
-  }
-
-  Future<void> fetchMonitors() async {
-    try {
-      final result = await apiClient.getMonitors();
-      setState(() {
-        monitors = result;
-      });
-    } catch (e) {
-      setState(() {
-        errorMessage = e.toString();
+        infoErrorMessage = e.toString();
       });
     }
   }
@@ -119,7 +106,10 @@ class _HomePageState extends State<HomePage> {
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 20),
           child: [
-            OverviewTab(errorMessage: errorMessage, info: info),
+            OverviewTab(
+              errorMessage: infoErrorMessage,
+              info: info,
+            ),
             MonitorsTab(),
           ][_navIndex],
         ),
