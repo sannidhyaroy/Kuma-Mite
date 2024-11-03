@@ -11,12 +11,19 @@ class MonitorsTab extends StatefulWidget {
 
 class _MonitorsTabState extends State<MonitorsTab> {
   final ApiClient apiClient = ApiClient();
-  List<Monitor> monitors = [];
+  late List<Monitor> monitors;
   String errorMessage = '';
+  late Future<Map<String, dynamic>> _response;
 
-  Future<void> fetchMonitors() async {
-    final result = await apiClient.getMonitors();
+  @override
+  void initState() {
+    super.initState();
+    _response = apiClient.getMonitors();
+  }
+
+  void parseResponse(Map<String, dynamic> result) {
     var monitorsObject = result["monitors"];
+    monitors = [];
     for (var monitorObject in monitorsObject) {
       Monitor monitor = Monitor(
         id: monitorObject['id'],
@@ -26,29 +33,30 @@ class _MonitorsTabState extends State<MonitorsTab> {
         maintenance: monitorObject['maintenance'],
       );
       monitors.add(monitor);
-      // print('------------------------------');
-      // print(
-      //     'ID: ${monitor.id}\nName: ${monitor.name}\nDescription: ${monitor.description}\nActive: ${monitor.active}\nMaintenance: ${monitor.maintenance}');
-      // print('------------------------------');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: fetchMonitors(),
+      future: _response,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.done) {
           if (snapshot.hasError) {
             return Center(
               child: Text(snapshot.error.toString()),
             );
-          } else {
+          } else if (snapshot.hasData) {
+            parseResponse(snapshot.data!);
             return ListView.builder(
                 itemCount: monitors.length,
                 itemBuilder: (context, index) {
                   return MonitorItem(monitor: monitors[index]);
                 });
+          } else {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
           }
         } else {
           return Center(
