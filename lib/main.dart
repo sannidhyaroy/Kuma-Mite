@@ -64,6 +64,7 @@ class _HomePageState extends State<HomePage> {
   final ApiClient apiClient = ApiClient();
   dynamic info;
   String infoErrorMessage = '';
+  final List<String> _tabNames = ['Overview', 'Monitors'];
   int _navIndex = 0;
 
   @override
@@ -71,16 +72,6 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     super.initState();
     fetchInfo();
-  }
-
-  String getAppBarTitle() {
-    switch (_navIndex) {
-      case 0:
-        return 'Overview';
-      case 1:
-        return 'Monitors';
-    }
-    return '';
   }
 
   Future<void> fetchInfo() async {
@@ -100,7 +91,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(getAppBarTitle()),
+        title: Text(_tabNames[_navIndex]),
       ),
       body: SafeArea(
         child: Padding(
@@ -120,12 +111,12 @@ class _HomePageState extends State<HomePage> {
           NavigationDestination(
             icon: Icon(Icons.home_outlined),
             selectedIcon: Icon(Icons.home_filled),
-            label: 'Home',
+            label: _tabNames[0],
           ),
           NavigationDestination(
             icon: Icon(Icons.view_list_outlined),
             selectedIcon: Icon(Icons.view_list),
-            label: 'Monitors',
+            label: _tabNames[1],
           ),
         ],
         onDestinationSelected: (int index) {
