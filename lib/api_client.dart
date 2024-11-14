@@ -90,13 +90,29 @@ class ApiClient {
 }
 
 class BaseUrlException implements Exception {
-  String cause;
+  String? cause;
 
-  BaseUrlException(this.cause);
+  BaseUrlException([this.cause]);
+
+  @override
+  String toString() {
+    if (cause == null) {
+      return 'Server Address is not set. Set a valid url for the API Server';
+    }
+    return cause!;
+  }
 }
 
 class AccessTokenException implements Exception {
-  String cause;
+  String? cause;
 
-  AccessTokenException(this.cause);
+  AccessTokenException([this.cause]);
+
+  @override
+  String toString() {
+    if (cause == null) {
+      return 'Access Token is either not set or has expired. Login to the API Server to generate an access token';
+    }
+    return cause!;
+  }
 }
