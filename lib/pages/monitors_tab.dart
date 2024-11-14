@@ -12,7 +12,6 @@ class MonitorsTab extends StatefulWidget {
 class _MonitorsTabState extends State<MonitorsTab> {
   final ApiClient apiClient = ApiClient();
   late List<Monitor> monitors;
-  String errorMessage = '';
   late Future<Map<String, dynamic>> _response;
 
   @override
@@ -34,6 +33,9 @@ class _MonitorsTabState extends State<MonitorsTab> {
       );
       monitors.add(monitor);
     }
+    monitors.sort(
+      (a, b) => a.name.compareTo(b.name),
+    );
   }
 
   @override
