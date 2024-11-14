@@ -111,7 +111,21 @@ class AccessTokenException implements Exception {
   @override
   String toString() {
     if (cause == null) {
-      return 'Access Token is either not set or has expired. Login to the API Server to generate an access token';
+      return 'Your Access Token is either not set or has expired. Login to the API Server to generate an access token';
+    }
+    return cause!;
+  }
+}
+
+class TimeOutException implements Exception {
+  String? cause;
+
+  TimeOutException([this.cause]);
+
+  @override
+  String toString() {
+    if (cause == null) {
+      return 'Your connection timed out while waiting for event info. Please check your internet connection and try again.';
     }
     return cause!;
   }
