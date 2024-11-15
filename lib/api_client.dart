@@ -30,7 +30,7 @@ class ApiClient {
       secrets.setAccessToken(accessToken);
       return true;
     } else {
-      // throw Exception('Failed to log in: ${response.body}');
+      // throw Exception(response.body);
       print('ERROR: ${response.body}');
       return false;
     }
@@ -40,12 +40,10 @@ class ApiClient {
     String? baseUrl = await secrets.getBaseUrl();
     String? accessToken = await secrets.getAccessToken();
     if (baseUrl == null) {
-      throw BaseUrlException(
-          'Server Address is not set. Set a valid url for the API Server');
+      throw BaseUrlException();
     }
     if (accessToken == null) {
-      throw AccessTokenException(
-          'Access Token is not set. Login to the API Server to get a access token.');
+      throw AccessTokenException();
     }
     final response = await http.get(
       Uri.parse('$baseUrl/info'),
@@ -58,7 +56,13 @@ class ApiClient {
     if (response.statusCode == 200) {
       return json.decode(response.body) as Map<String, dynamic>;
     } else {
-      throw http.ClientException('Failed to load info: ${response.body}');
+      if (needReLogin(response)) {
+        throw AccessTokenException();
+      } else if (hasConnectionTimedOut(response)) {
+        throw TimeOutException();
+      } else {
+        throw http.ClientException(response.body);
+      }
     }
   }
 
@@ -66,12 +70,10 @@ class ApiClient {
     String? baseUrl = await secrets.getBaseUrl();
     String? accessToken = await secrets.getAccessToken();
     if (baseUrl == null) {
-      throw BaseUrlException(
-          'Server Address is not set. Set a valid url for the API Server');
+      throw BaseUrlException();
     }
     if (accessToken == null) {
-      throw AccessTokenException(
-          'Access Token is not set. Login to the API Server to get a access token.');
+      throw AccessTokenException();
     }
     final response = await http.get(
       Uri.parse('$baseUrl/monitors/'),
@@ -84,8 +86,53 @@ class ApiClient {
     if (response.statusCode == 200) {
       return json.decode(response.body) as Map<String, dynamic>;
     } else {
-      throw http.ClientException('Failed to load monitors: ${response.body}');
+      if (needReLogin(response)) {
+        throw AccessTokenException();
+      } else if (hasConnectionTimedOut(response)) {
+        throw TimeOutException();
+      } else {
+        throw http.ClientException(response.body);
+      }
     }
+  }
+
+  Future<Map<String, dynamic>> getBeats({required int monitorId}) async {
+    String? baseUrl = await secrets.getBaseUrl();
+    String? accessToken = await secrets.getAccessToken();
+    if (baseUrl == null) {
+      throw BaseUrlException();
+    }
+    if (accessToken == null) {
+      throw AccessTokenException();
+    }
+    final response = await http.get(
+      Uri.parse('$baseUrl/monitors/$monitorId/beats'),
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body) as Map<String, dynamic>;
+    } else {
+      if (needReLogin(response)) {
+        throw AccessTokenException();
+      } else if (hasConnectionTimedOut(response)) {
+        throw TimeOutException();
+      } else {
+        throw http.ClientException(response.body);
+      }
+    }
+  }
+
+  bool needReLogin(http.Response response) {
+    return jsonDecode(response.body)['detail'] == 'invalid credentials';
+  }
+
+  bool hasConnectionTimedOut(http.Response response) {
+    return jsonDecode(response.body)['detail'] ==
+        'Timed out while waiting for event info';
   }
 }
 
