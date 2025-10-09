@@ -5,6 +5,8 @@ import 'package:kumamite/routes.dart';
 import 'package:kumamite/themes.dart';
 import 'package:kumamite/pages/overview_tab.dart';
 import 'package:kumamite/pages/monitors_tab.dart';
+import 'package:kumamite/pages/statuspage_tab.dart';
+import 'package:kumamite/pages/maintenance_tab.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
@@ -64,7 +66,12 @@ class _HomePageState extends State<HomePage> {
   final ApiClient apiClient = ApiClient();
   dynamic info;
   String infoErrorMessage = '';
-  final List<String> _tabNames = ['Overview', 'Monitors'];
+  final List<String> _tabNames = [
+    'Overview',
+    'Monitors',
+    'Status Page',
+    'Maintenance',
+  ];
   int _navIndex = 0;
 
   @override
@@ -102,23 +109,20 @@ class _HomePageState extends State<HomePage> {
               info: info,
             ),
             MonitorsTab(),
+            StatusPageTab(),
+            MaintenanceTab(),
           ][_navIndex],
         ),
       ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _navIndex,
-        destinations: [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home_filled),
-            label: _tabNames[0],
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.view_list_outlined),
-            selectedIcon: Icon(Icons.view_list),
-            label: _tabNames[1],
-          ),
-        ],
+        destinations: List.generate(_tabNames.length, (index) {
+          return NavigationDestination(
+            icon: Icon(_getTabIcon(index, false)),
+            selectedIcon: Icon(_getTabIcon(index, true)),
+            label: _tabNames[index],
+          );
+        }),
         onDestinationSelected: (int index) {
           setState(() {
             _navIndex = index;
@@ -126,5 +130,20 @@ class _HomePageState extends State<HomePage> {
         },
       ),
     );
+  }
+}
+
+IconData _getTabIcon(int index, bool isSelected) {
+  switch (index) {
+    case 0:
+      return isSelected ? Icons.home_filled : Icons.home_outlined;
+    case 1:
+      return isSelected ? Icons.view_list : Icons.view_list_outlined;
+    case 2:
+      return isSelected ? Icons.amp_stories : Icons.amp_stories_outlined;
+    case 3:
+      return isSelected ? Icons.handyman : Icons.handyman_outlined;
+    default:
+      return Icons.help_outline;
   }
 }
