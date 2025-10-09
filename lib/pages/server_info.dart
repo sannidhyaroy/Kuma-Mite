@@ -4,14 +4,33 @@ import 'package:kumamite/themes.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class ServerPage extends StatefulWidget {
+class ServerPage extends StatelessWidget {
   const ServerPage({super.key});
 
   @override
-  State<ServerPage> createState() => _ServerPageState();
+  Widget build(BuildContext context) {
+    return Theme(
+      data: setupTheme,
+      child: Scaffold(
+        backgroundColor: setupScreenThemeColor,
+        body: SafeArea(
+          child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: ServerInfoItems()),
+        ),
+      ),
+    );
+  }
 }
 
-class _ServerPageState extends State<ServerPage> {
+class ServerInfoItems extends StatefulWidget {
+  const ServerInfoItems({super.key});
+
+  @override
+  State<ServerInfoItems> createState() => _ServerInfoItemsState();
+}
+
+class _ServerInfoItemsState extends State<ServerInfoItems> {
   final _controller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final storage = FlutterSecureStorage();
@@ -41,84 +60,72 @@ class _ServerPageState extends State<ServerPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Theme(
-      data: lightTheme,
-      child: Scaffold(
-        backgroundColor: themeColor,
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Enter your Kuma API Server\'s address',
-                  style: setupScreenHeader,
-                ),
-                const SizedBox(height: 5),
-                RichText(
-                  text: TextSpan(
-                    style: setupScreenSubtitle,
-                    children: <TextSpan>[
-                      TextSpan(
-                        text:
-                            'You\'ll need a RestAPI Server running alongside Kuma for this app to be able to communicate with it. ',
-                      ),
-                      TextSpan(
-                        text: 'Read more.',
-                        style: setupScreenLink,
-                        recognizer: TapGestureRecognizer()..onTap = _launchURL,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 25),
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  child: Form(
-                    key: _formKey,
-                    child: TextFormField(
-                      autofocus: true,
-                      autofillHints: [AutofillHints.url],
-                      controller: _controller,
-                      cursorColor: setupScreenPrimaryColor,
-                      decoration: const InputDecoration(
-                        labelText: 'Kuma API Server Address',
-                        hintText: 'https://api.kuma.pet',
-                        border: UnderlineInputBorder(),
-                      ),
-                      style: setupInputFieldText,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Server Address is required';
-                        } else if (!(isValidUrl(value))) {
-                          return 'Server Address is invalid';
-                        } else {
-                          return null;
-                        }
-                      },
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                OutlinedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      _setServer();
-                      Navigator.of(context).pushNamed('/login');
-                    }
-                  },
-                  style: setupNextButtonStyle,
-                  child: setupNextButtonIcon,
-                ),
-              ],
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          'Enter your Kuma API Server\'s address',
+          style: setupScreenHeader,
+        ),
+        const SizedBox(height: 5),
+        RichText(
+          text: TextSpan(
+            style: setupScreenSubtitle,
+            children: <TextSpan>[
+              const TextSpan(
+                text:
+                    'You\'ll need a RestAPI Server running alongside Uptime Kuma for this app to be able to communicate with it.',
+              ),
+              TextSpan(
+                text: 'Read more.',
+                style: linkTextStyle,
+                recognizer: TapGestureRecognizer()..onTap = _launchURL,
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 25),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+          child: Form(
+            key: _formKey,
+            child: TextFormField(
+              autofocus: true,
+              autofillHints: [AutofillHints.url],
+              controller: _controller,
+              cursorColor: setupScreenPrimaryColor,
+              decoration: const InputDecoration(
+                labelText: 'Kuma API Server Address',
+                hintText: 'https://api.kuma.pet',
+                border: UnderlineInputBorder(),
+              ),
+              style: setupInputFieldText,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Server Address is required';
+                } else if (!(isValidUrl(value))) {
+                  return 'Server Address is invalid';
+                } else {
+                  return null;
+                }
+              },
             ),
           ),
         ),
-      ),
+        const SizedBox(
+          height: 30,
+        ),
+        OutlinedButton(
+          onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              _setServer();
+              Navigator.of(context).pushNamed('/login');
+            }
+          },
+          style: setupNextButtonStyle(context),
+          child: setupNextButtonIcon,
+        ),
+      ],
     );
   }
 }

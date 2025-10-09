@@ -4,20 +4,15 @@ import 'package:kumamite/themes.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<LoginPage> {
-  @override
   Widget build(BuildContext context) {
     return Theme(
-      data: lightTheme,
+      data: setupTheme,
       child: Scaffold(
-        backgroundColor: themeColor,
+        backgroundColor: setupScreenThemeColor,
         body: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -30,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 5),
                 Text(
-                  'Authenticate using your Kuma API Credentials',
+                  'Authenticate using your Uptime Kuma API Server Credentials',
                   style: setupScreenSubtitle,
                 ),
                 const SizedBox(height: 25),
@@ -87,7 +82,7 @@ class _AuthFormState extends State<AuthForm> {
         child: Column(
           children: [
             TextFormField(
-              autofocus: false,
+              autofocus: true,
               autofillHints: const [
                 "admin",
               ],
@@ -171,7 +166,9 @@ class _AuthFormState extends State<AuthForm> {
                   }
                 }
               },
-              style: _isPressed ? loginProgressButtonStyle : loginButtonStyle,
+              style: _isPressed
+                  ? setupNextButtonStyle(context)
+                  : loginButtonStyle(context),
               child: _isPressed
                   ? CircularProgressIndicator()
                   : Text(

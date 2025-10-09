@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 // Primary Color
 Color themeColor = Color(0xFF5CDD8B);
+Color setupScreenThemeColor = Color(0xFFCCEEFF);
 
 // Font Families
 String primaryFontFamily = 'Raleway';
 String secondaryFontFamily = 'Quicksand';
+String setupPrimaryFontFamily = 'Michroma';
 
 // Material App Themes
 ThemeData lightTheme = ThemeData(
@@ -20,6 +22,14 @@ ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
   colorSchemeSeed: themeColor,
   fontFamily: primaryFontFamily,
+  textTheme: ralewayTheme,
+  useMaterial3: true,
+);
+
+ThemeData setupTheme = ThemeData(
+  brightness: Brightness.light,
+  colorSchemeSeed: setupScreenThemeColor,
+  fontFamily: setupPrimaryFontFamily,
   textTheme: ralewayTheme,
   useMaterial3: true,
 );
@@ -68,8 +78,6 @@ Color setupScreenPrimaryColor = Colors.black;
 Color setupScreenSubtitleColor = Colors.blueGrey;
 
 TextStyle splashScreenHeader = TextStyle(
-  color: setupScreenPrimaryColor,
-  fontFamily: primaryFontFamily,
   fontSize: 25,
   fontVariations: fontBolder,
 );
@@ -80,8 +88,6 @@ TextStyle splashScreenSubtitle = TextStyle(
   fontVariations: fontNormal,
 );
 TextStyle setupScreenHeader = TextStyle(
-  color: setupScreenPrimaryColor,
-  fontFamily: primaryFontFamily,
   fontSize: 28,
   fontVariations: fontBold,
 );
@@ -92,7 +98,6 @@ TextStyle setupScreenSubtitle = TextStyle(
   fontVariations: fontNormal,
 );
 TextStyle setupButtonText = TextStyle(
-  color: setupScreenPrimaryColor,
   fontFamily: primaryFontFamily,
   fontVariations: fontNormal,
   fontSize: 20,
@@ -100,39 +105,36 @@ TextStyle setupButtonText = TextStyle(
 TextStyle setupInputFieldText = TextStyle(
   fontFamily: primaryFontFamily,
 );
-TextStyle setupScreenLink = TextStyle(
+TextStyle linkTextStyle = TextStyle(
   decoration: TextDecoration.underline,
-);
-
-ButtonStyle setupNextButtonStyle = OutlinedButton.styleFrom(
-  side: BorderSide(
-    color: setupScreenPrimaryColor,
-  ),
-  shape: CircleBorder(),
-  padding: EdgeInsets.all(5),
 );
 
 Icon setupNextButtonIcon = Icon(
   Icons.navigate_next,
-  color: setupScreenPrimaryColor,
   size: 40,
 );
 
-ButtonStyle loginButtonStyle = OutlinedButton.styleFrom(
-  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-  padding: EdgeInsets.symmetric(
-    horizontal: 40,
-    vertical: 8,
-  ),
-  side: BorderSide(
-    color: setupScreenPrimaryColor,
-  ),
-);
+ButtonStyle setupNextButtonStyle(BuildContext context) {
+  return OutlinedButton.styleFrom(
+    shape: CircleBorder(),
+    padding: EdgeInsets.all(8),
+    side: BorderSide(
+      color: Theme.of(context).colorScheme.primary,
+    ),
+  );
+}
 
-ButtonStyle loginProgressButtonStyle = OutlinedButton.styleFrom(
-  shape: CircleBorder(),
-  padding: EdgeInsets.all(8),
-  side: BorderSide(
-    color: setupScreenPrimaryColor,
-  ),
-);
+ButtonStyle loginButtonStyle(BuildContext context) {
+  return OutlinedButton.styleFrom(
+    enableFeedback: true,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+    padding: EdgeInsets.symmetric(
+      horizontal: 40,
+      vertical: 8,
+    ),
+    side: BorderSide(
+      width: 2,
+      color: Theme.of(context).colorScheme.primary,
+    ),
+  );
+}
